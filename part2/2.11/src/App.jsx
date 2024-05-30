@@ -66,7 +66,7 @@ const App = () => {
           setNewName("");
           setNewNumber("");
           setAlertMessage({
-            message: `'${personToCheck.name}' has been added`,
+            message: `'${nameObject.name}' has been added`,
             type: "success",
           });
           setTimeout(() => {
@@ -75,7 +75,7 @@ const App = () => {
         })
         .catch((error) => {
           setAlertMessage({
-            message: `Failed to add '${personToCheck.name}'`,
+            message: `Failed to add '${nameObject.name}'`,
             type: "error",
           });
           setTimeout(() => {
