@@ -1,11 +1,14 @@
 import { useState, useEffect } from "react";
 import personsService from "./services/persons";
+import "./index.css";
 
 const App = () => {
   const [persons, setPersons] = useState([]);
   const [newName, setNewName] = useState("");
   const [newNumber, setNewNumber] = useState("");
   const [newFilter, setNewFilter] = useState("");
+  const [alertMessage, setAlertMessage] = useState(null);
+
   useEffect(() => {
     personsService.getAll().then((initialPersons) => {
       setPersons(initialPersons);
@@ -35,15 +38,50 @@ const App = () => {
             );
             setNewName("");
             setNewNumber("");
+            setAlertMessage({
+              message: `'${personToCheck.name}' has been updated`,
+              type: "success",
+            });
+            setTimeout(() => {
+              setAlertMessage(null);
+            }, 5000);
+          })
+          .catch((error) => {
+            setAlertMessage({
+              message: `'${personToCheck.name}' does not exist in the phone book`,
+              type: "error",
+            });
+            setTimeout(() => {
+              setAlertMessage(null);
+            }, 5000);
+            setPersons(persons.filter((p) => p.id !== personToCheck.id));
           });
       }
       return;
     } else {
-      personsService.create(nameObject).then((returnedPersons) => {
-        setPersons(persons.concat(returnedPersons));
-        setNewName("");
-        setNewNumber("");
-      });
+      personsService
+        .create(nameObject)
+        .then((returnedPersons) => {
+          setPersons(persons.concat(returnedPersons));
+          setNewName("");
+          setNewNumber("");
+          setAlertMessage({
+            message: `'${personToCheck.name}' has been added`,
+            type: "success",
+          });
+          setTimeout(() => {
+            setAlertMessage(null);
+          }, 5000);
+        })
+        .catch((error) => {
+          setAlertMessage({
+            message: `Failed to add '${personToCheck.name}'`,
+            type: "error",
+          });
+          setTimeout(() => {
+            setAlertMessage(null);
+          }, 5000);
+        });
     }
   };
 
@@ -53,7 +91,13 @@ const App = () => {
       personsService.remove(id).then(() => {
         setPersons(persons.filter((person) => person.id !== id));
       });
-      alert(`Successfully remove ${person.name} from the phone book`);
+      setAlertMessage({
+        message: `'${person.name}' has been removed from the phone book`,
+        type: "success",
+      });
+      setTimeout(() => {
+        setAlertMessage(null);
+      }, 5000);
     }
   };
 
@@ -78,6 +122,7 @@ const App = () => {
   return (
     <div>
       <h2>Phonebook</h2>
+      <Notification message={alertMessage?.message} type={alertMessage?.type} />
       <Filter value={newFilter} onChange={handleFilterChange} />
       <h3>Add new contact</h3>
       <PersonForm
@@ -128,4 +173,11 @@ const Filter = ({ value, onChange }) => (
   </div>
 );
 
+const Notification = ({ message, type }) => {
+  if (message === null) {
+    return null;
+  }
+
+  return <div className={type}>{message}</div>;
+};
 export default App;
