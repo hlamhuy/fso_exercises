@@ -1,10 +1,10 @@
 const config = require("./utils/config");
 const logger = require("./utils/logger");
+const express = require("express");
 const app = express();
 const cors = require("cors");
 const personsRouter = require("./controllers/persons");
 const middleware = require("./utils/middleware");
-const logger = require("./utils/logger");
 const mongoose = require("mongoose");
 
 mongoose.set("strictQuery", false);
@@ -12,7 +12,7 @@ mongoose.set("strictQuery", false);
 logger.info("connecting to", config.MONGODB_URI);
 
 mongoose
-  .connect(url)
+  .connect(config.MONGODB_URI)
   .then((result) => {
     console.log("connected to MongoDB");
   })
