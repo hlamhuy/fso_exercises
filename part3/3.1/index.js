@@ -2,7 +2,8 @@ const express = require("express");
 const morgan = require("morgan");
 require("dotenv").config();
 const app = express();
-const Person = require("./models/person");
+const config = require("./utils/config");
+const logger = require("./utils/logger");
 
 app.use(express.static("dist"));
 app.use(express.json());
@@ -115,7 +116,6 @@ const errorHandler = (error, request, response, next) => {
 app.use(errorHandler);
 
 // PORT config
-const PORT = process.env.PORT;
 app.listen(PORT, () => {
-  console.log(`Server running on port ${PORT}`);
+  logger.info(`Server running on port ${config.PORT}`);
 });
