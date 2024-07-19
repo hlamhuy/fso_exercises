@@ -28,6 +28,7 @@ const App = () => {
           `${personToCheck.name} is already existed. Do you want to update with new info?`
         )
       ) {
+        // update person
         personsService
           .update(personToCheck.id, nameObject)
           .then((returnedPersons) => {
@@ -48,17 +49,18 @@ const App = () => {
           })
           .catch((error) => {
             setAlertMessage({
-              message: `'${personToCheck.name}' does not exist in the phone book`,
+              message: error.response.data.error,
               type: "error",
             });
             setTimeout(() => {
               setAlertMessage(null);
             }, 5000);
-            setPersons(persons.filter((p) => p.id !== personToCheck.id));
+            //setPersons(persons.filter((p) => p.id !== personToCheck.id));
           });
       }
       return;
     } else {
+      // add person
       personsService
         .create(nameObject)
         .then((returnedPersons) => {
@@ -75,7 +77,7 @@ const App = () => {
         })
         .catch((error) => {
           setAlertMessage({
-            message: `Failed to add '${nameObject.name}'`,
+            message: error.response.data.error,
             type: "error",
           });
           setTimeout(() => {
