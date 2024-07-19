@@ -32,4 +32,7 @@ export default [
   {
     ignores: ["dist/**", "build/**"],
   },
+  {
+    extends: ["plugin:prettier/recommended"],
+  },
 ];
