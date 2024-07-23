@@ -1,9 +1,11 @@
 import globals from "globals";
 import js from "@eslint/js";
 import stylisticJs from "@stylistic/eslint-plugin-js";
+import eslintPrettier from "eslint-plugin-prettier/recommended";
 
 export default [
   js.configs.recommended,
+  eslintPrettier,
   {
     files: ["**/*.js"],
     languageOptions: {
@@ -31,8 +33,5 @@ export default [
   },
   {
     ignores: ["dist/**", "build/**"],
-  },
-  {
-    extends: ["plugin:prettier/recommended"],
   },
 ];
