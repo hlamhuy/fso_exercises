@@ -4,12 +4,34 @@ const assert = require("node:assert");
 const { test, after, beforeEach } = require("node:test");
 const app = require("../app");
 const Blog = require("../models/blog");
+const User = require("../models/user");
 const api = supertest(app);
 const helper = require("./test_helper");
+const bcrypt = require("bcryptjs");
+const jwt = require("jsonwebtoken");
+let token;
 
 beforeEach(async () => {
   await Blog.deleteMany({});
-  await Blog.insertMany(helper.initialBlogs);
+  await User.deleteMany({});
+
+  const passwordHash = await bcrypt.hash("salainen", 10);
+  const user = new User({ username: "root", passwordHash });
+  const blogs = await Blog.insertMany(helper.initialBlogs);
+
+  const savedUser = await user.save();
+  await Promise.all(
+    blogs.map(async (blog) => {
+      blog.user = savedUser.id;
+      await blog.save();
+    })
+  );
+  const userForToken = {
+    username: savedUser.username,
+    id: savedUser._id,
+  };
+
+  token = jwt.sign(userForToken, process.env.SECRET);
 });
 
 // 4.8
@@ -41,6 +63,7 @@ test("4.10", async () => {
 
   await api
     .post("/api/blogs")
+    .set("Authorization", `Bearer ${token}`)
     .send(newBlog)
     .expect(201)
     .expect("Content-Type", /application\/json/);
@@ -62,15 +85,12 @@ test("4.11", async () => {
 
   const response = await api
     .post("/api/blogs")
+    .set("Authorization", `Bearer ${token}`)
     .send(newBlog)
     .expect(201)
     .expect("Content-Type", /application\/json/);
 
   assert.strictEqual(response.body.likes, 0);
-});
-
-after(async () => {
-  await mongoose.connection.close();
 });
 
 // 4.12
@@ -79,7 +99,11 @@ test("4.12", async () => {
     author: "Edsger W. Dijkstra",
   };
 
-  await api.post("/api/blogs").send(newBlog).expect(400);
+  await api
+    .post("/api/blogs")
+    .set("Authorization", `Bearer ${token}`)
+    .send(newBlog)
+    .expect(400);
 
   const blogsAtEnd = await helper.blogsInDb();
 
@@ -91,7 +115,10 @@ test("4.13", async () => {
   const blogsAtStart = await helper.blogsInDb();
   const blogToDelete = blogsAtStart[0];
 
-  await api.delete(`/api/blogs/${blogToDelete.id}`).expect(204);
+  await api
+    .delete(`/api/blogs/${blogToDelete.id}`)
+    .set("Authorization", `Bearer ${token}`)
+    .expect(204);
 
   const blogsAtEnd = await helper.blogsInDb();
 
@@ -114,4 +141,26 @@ test("4.14", async () => {
     .expect("Content-Type", /application\/json/);
 
   assert.strictEqual(response.body.likes, newLikes.likes);
+});
+
+// 4.23
+test("4.23", async () => {
+  const newBlog = {
+    title: "Second class tests",
+    author: "Me",
+    url: "http://google.com",
+    likes: 1,
+  };
+
+  await api
+    .post("/api/blogs")
+    .send(newBlog)
+    .expect(401)
+    .expect("Content-Type", /application\/json/);
+
+  const blogsAtEnd = await helper.blogsInDb();
+  assert.strictEqual(blogsAtEnd.length, helper.initialBlogs.length);
+});
+after(async () => {
+  await mongoose.connection.close();
 });
