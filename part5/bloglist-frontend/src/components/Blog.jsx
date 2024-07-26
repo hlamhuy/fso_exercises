@@ -48,5 +48,10 @@ const Blog = ({ blog, updateBlog, removeBlog, currentUser }) => {
     </div>
   );
 };
-
+BlogForm.propTypes = {
+  blog: PropTypes.func.isRequired,
+  updateBlog: PropTypes.func.isRequired,
+  removeBlog: PropTypes.func.isRequired,
+  currentUser: PropTypes.func.isRequired,
+};
 export default Blog;
