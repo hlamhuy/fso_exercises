@@ -69,12 +69,12 @@ blogsRouter.delete("/:id", async (request, response, next) => {
 // PUT methods
 blogsRouter.put("/:id", async (request, response, next) => {
   const body = request.body;
-
+  console.log(body.user);
   const blog = await Blog.findByIdAndUpdate(
     request.params.id,
-    { likes: body.likes },
+    { likes: body.likes, user: body.user.id },
     { new: true }
-  );
+  ).populate("user");
   response.json(blog);
 });
 
