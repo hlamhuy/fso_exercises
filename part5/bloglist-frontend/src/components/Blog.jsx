@@ -8,15 +8,13 @@ const Blog = ({ blog, updateBlog, removeBlog, currentUser }) => {
     setVisible(!visible);
   };
 
-  const handleLike = async () => {
+  const handleLike = () => {
     const updatedBlog = { ...blog, likes: blog.likes + 1, user: blog.user };
-    const returnedBlog = await blogService.update(blog.id, updatedBlog);
-    updateBlog(returnedBlog);
+    updateBlog(updatedBlog);
   };
 
-  const handleRemove = async () => {
+  const handleRemove = () => {
     if (window.confirm(`Remove blog ${blog.title} by ${blog.author}`)) {
-      await blogService.remove(blog.id);
       removeBlog(blog.id);
     }
   };
@@ -28,7 +26,7 @@ const Blog = ({ blog, updateBlog, removeBlog, currentUser }) => {
     marginBottom: 5,
   };
   return (
-    <div style={blogStyle}>
+    <div style={blogStyle} className="blog">
       <div>
         {blog.title} - {blog.author}{" "}
         <button onClick={toggleVisibility}>{visible ? "hide" : "view"}</button>
@@ -48,10 +46,5 @@ const Blog = ({ blog, updateBlog, removeBlog, currentUser }) => {
     </div>
   );
 };
-BlogForm.propTypes = {
-  blog: PropTypes.func.isRequired,
-  updateBlog: PropTypes.func.isRequired,
-  removeBlog: PropTypes.func.isRequired,
-  currentUser: PropTypes.func.isRequired,
-};
+
 export default Blog;

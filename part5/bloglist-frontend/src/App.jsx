@@ -79,13 +79,15 @@ const App = () => {
         }, 5000);
       });
   };
-  const updateBlog = (updatedBlog) => {
+  const updateBlog = async (updatedBlog) => {
+    const returnedBlog = await blogService.update(updatedBlog.id, updatedBlog);
     setBlogs(
-      blogs.map((blog) => (blog.id === updatedBlog.id ? updatedBlog : blog))
+      blogs.map((blog) => (blog.id === returnedBlog.id ? returnedBlog : blog))
     );
   };
 
-  const removeBlog = (id) => {
+  const removeBlog = async (id) => {
+    await blogService.remove(id);
     setBlogs(blogs.filter((blog) => blog.id !== id));
   };
   const loginForm = () => (
