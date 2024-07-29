@@ -99,6 +99,7 @@ const App = () => {
           value={username}
           name="Username"
           onChange={({ target }) => setUsername(target.value)}
+          data-testid="username"
         />
       </div>
       <div>
@@ -108,6 +109,7 @@ const App = () => {
           value={password}
           name="Password"
           onChange={({ target }) => setPassword(target.value)}
+          data-testid="password"
         />
       </div>
       <button type="submit">login</button>
@@ -141,7 +143,7 @@ const App = () => {
       <h2>blogs</h2>
       <Notification message={alertMessage?.message} type={alertMessage?.type} />
       <p>
-        {user.name} logged-in <button onClick={handleLogout}>logout</button>
+        {user.name} logged in <button onClick={handleLogout}>logout</button>
       </p>
       {blogForm()}
       {sortedBlogs.map((blog) => (
