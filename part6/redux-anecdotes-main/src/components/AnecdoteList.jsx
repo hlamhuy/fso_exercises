@@ -10,8 +10,8 @@ const AnecdoteList = () => {
   const dispatch = useDispatch();
 
   const vote = (id) => {
-    const anecdote = anecdotes.find((a) => a.id === id);
     dispatch(voteAnecdote(id));
+    const anecdote = anecdotes.find((a) => a.id === id);
     dispatch(showNotification(`You voted '${anecdote.content}'`, 5));
   };
 
