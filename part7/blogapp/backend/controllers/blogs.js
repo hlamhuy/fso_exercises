@@ -34,6 +34,25 @@ router.post("/", userExtractor, async (request, response) => {
   response.status(201).json(savedBlog);
 });
 
+router.post("/:id/comments", async (request, response) => {
+  const { comment } = request.body;
+
+  if (!comment) {
+    return response.status(400).json({ error: "Comment content missing" });
+  }
+
+  const blog = await Blog.findById(request.params.id);
+
+  if (!blog) {
+    return response.status(404).json({ error: "Blog not found" });
+  }
+
+  blog.comments = blog.comments.concat(comment);
+  const updatedBlog = await blog.save();
+
+  response.status(201).json(updatedBlog);
+});
+
 router.delete("/:id", userExtractor, async (request, response) => {
   const user = request.user;
 
