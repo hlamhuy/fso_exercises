@@ -16,6 +16,7 @@ import { loadUserFromStorage, logoutUser } from "./reducers/userReducer";
 import { BrowserRouter as Router, Routes, Route, Link } from "react-router-dom";
 import UserList from "./components/UserList";
 import UserDetail from "./components/UserDetail";
+import BlogDetail from "./components/BlogDetail";
 
 const App = () => {
   const blogs = useSelector((state) => state.blog);
@@ -40,23 +41,9 @@ const App = () => {
     blogFormRef.current.toggleVisibility();
   };
 
-  const handleVote = async (blog) => {
-    dispatch(voteBlog(blog));
-    dispatch(showNotification(`You liked ${blog.title} by ${blog.author}`, 5));
-  };
-
   const handleLogout = () => {
     dispatch(logoutUser());
     dispatch(showNotification(`Bye, ${user.name}!`, 5));
-  };
-
-  const handleDelete = async (blog) => {
-    if (window.confirm(`Remove blog ${blog.title} by ${blog.author}`)) {
-      dispatch(deleteBlog(blog.id));
-      dispatch(
-        showNotification(`Blog ${blog.title}, by ${blog.author} removed`, 5)
-      );
-    }
   };
 
   if (!user) {
@@ -85,6 +72,7 @@ const App = () => {
         <Routes>
           <Route path="/users" element={<UserList />} />
           <Route path="/users/:id" element={<UserDetail />} />
+          <Route path="/blogs/:id" element={<BlogDetail />} />
           <Route
             path="/"
             element={
@@ -93,12 +81,7 @@ const App = () => {
                   <NewBlog doCreate={handleCreate} />
                 </Togglable>
                 {[...blogs].sort(byLikes).map((blog) => (
-                  <Blog
-                    key={blog.id}
-                    blog={{ ...blog }}
-                    handleVote={() => handleVote(blog)}
-                    handleDelete={() => handleDelete(blog)}
-                  />
+                  <Blog key={blog.id} blog={{ ...blog }} />
                 ))}
               </>
             }
