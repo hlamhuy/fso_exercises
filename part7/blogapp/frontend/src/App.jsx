@@ -6,17 +6,13 @@ import Blog from "./components/Blog";
 import NewBlog from "./components/NewBlog";
 import Notification from "./components/Notification";
 import Togglable from "./components/Togglable";
-import {
-  addBlog,
-  initializeBlogs,
-  deleteBlog,
-  voteBlog,
-} from "./reducers/blogReducer";
-import { loadUserFromStorage, logoutUser } from "./reducers/userReducer";
-import { BrowserRouter as Router, Routes, Route, Link } from "react-router-dom";
+import { addBlog, initializeBlogs } from "./reducers/blogReducer";
+import { loadUserFromStorage } from "./reducers/userReducer";
+import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import UserList from "./components/UserList";
 import UserDetail from "./components/UserDetail";
 import BlogDetail from "./components/BlogDetail";
+import Menu from "./components/Menu";
 
 const App = () => {
   const blogs = useSelector((state) => state.blog);
@@ -41,11 +37,6 @@ const App = () => {
     blogFormRef.current.toggleVisibility();
   };
 
-  const handleLogout = () => {
-    dispatch(logoutUser());
-    dispatch(showNotification(`Bye, ${user.name}!`, 5));
-  };
-
   if (!user) {
     return (
       <div>
@@ -61,14 +52,9 @@ const App = () => {
   return (
     <Router>
       <div>
+        <Menu />
         <h2>blogs</h2>
         <Notification />
-        <div>
-          {user.name} logged in
-          <div>
-            <button onClick={handleLogout}>logout</button>
-          </div>
-        </div>
         <Routes>
           <Route path="/users" element={<UserList />} />
           <Route path="/users/:id" element={<UserDetail />} />
