@@ -13,6 +13,9 @@ import {
   voteBlog,
 } from "./reducers/blogReducer";
 import { loadUserFromStorage, logoutUser } from "./reducers/userReducer";
+import { BrowserRouter as Router, Routes, Route, Link } from "react-router-dom";
+import UserList from "./components/UserList";
+import UserDetail from "./components/UserDetail";
 
 const App = () => {
   const blogs = useSelector((state) => state.blog);
@@ -69,25 +72,40 @@ const App = () => {
   const byLikes = (a, b) => b.likes - a.likes;
 
   return (
-    <div>
-      <h2>blogs</h2>
-      <Notification />
+    <Router>
       <div>
-        {user.name} logged in
-        <button onClick={handleLogout}>logout</button>
+        <h2>blogs</h2>
+        <Notification />
+        <div>
+          {user.name} logged in
+          <div>
+            <button onClick={handleLogout}>logout</button>
+          </div>
+        </div>
+        <Routes>
+          <Route path="/users" element={<UserList />} />
+          <Route path="/users/:id" element={<UserDetail />} />
+          <Route
+            path="/"
+            element={
+              <>
+                <Togglable buttonLabel="create new blog" ref={blogFormRef}>
+                  <NewBlog doCreate={handleCreate} />
+                </Togglable>
+                {[...blogs].sort(byLikes).map((blog) => (
+                  <Blog
+                    key={blog.id}
+                    blog={{ ...blog }}
+                    handleVote={() => handleVote(blog)}
+                    handleDelete={() => handleDelete(blog)}
+                  />
+                ))}
+              </>
+            }
+          />
+        </Routes>
       </div>
-      <Togglable buttonLabel="create new blog" ref={blogFormRef}>
-        <NewBlog doCreate={handleCreate} />
-      </Togglable>
-      {[...blogs].sort(byLikes).map((blog) => (
-        <Blog
-          key={blog.id}
-          blog={{ ...blog }}
-          handleVote={() => handleVote(blog)}
-          handleDelete={() => handleDelete(blog)}
-        />
-      ))}
-    </div>
+    </Router>
   );
 };
 
