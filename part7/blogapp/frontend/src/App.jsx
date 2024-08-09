@@ -39,7 +39,7 @@ const App = () => {
 
   if (!user) {
     return (
-      <div>
+      <div className="container">
         <h2>blogs</h2>
         <Notification />
         <Login />
@@ -51,7 +51,7 @@ const App = () => {
 
   return (
     <Router>
-      <div>
+      <div className="container">
         <Menu />
         <h2>blogs</h2>
         <Notification />

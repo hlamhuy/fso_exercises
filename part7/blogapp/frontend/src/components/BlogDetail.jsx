@@ -4,6 +4,7 @@ import { useParams } from "react-router-dom";
 import { initializeBlogs, voteBlog, deleteBlog } from "../reducers/blogReducer";
 import { showNotification } from "../reducers/notificationReducer";
 import storage from "../services/storage";
+import CommentForm from "./CommentForm";
 
 const BlogDetail = () => {
   const { id } = useParams();
@@ -11,7 +12,7 @@ const BlogDetail = () => {
   const blog = useSelector((state) =>
     state.blog.find((blog) => blog.id === id)
   );
-  const canRemove = blog.user ? blog.user.username === storage.me() : true;
+  const canRemove = blog ? blog.user.username === storage.me() : true;
 
   const handleVote = async (blog) => {
     dispatch(voteBlog(blog));
@@ -50,6 +51,14 @@ const BlogDetail = () => {
       </div>
       <div>added by {blog.user.name}</div>
       {canRemove && <button onClick={() => handleDelete(blog)}>remove</button>}
+      <h3>Comments</h3>
+      <ul>
+        {blog.comments.map((comment, index) => (
+          <li key={index}>{comment}</li>
+        ))}
+      </ul>
+
+      <CommentForm blogId={blog.id} />
     </div>
   );
 };
