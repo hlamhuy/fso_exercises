@@ -1,7 +1,7 @@
 const { ApolloServer } = require("@apollo/server");
 const { startStandaloneServer } = require("@apollo/server/standalone");
 const { v1: uuid } = require("uuid");
-
+const { GraphQLError } = require("graphql");
 let authors = [
   {
     name: "Robert Martin",
@@ -166,10 +166,19 @@ const resolvers = {
         };
         authors.concat(newAuthor);
       }
+      if (books.find((book) => book.title === args.title)) {
+        throw new GraphQLError("Book title must be unique", {
+          extensions: {
+            code: "BAD_TITLE_INPUT",
+            invalidArgs: args.title,
+          },
+        });
+      }
       const book = { ...args, id: uuid() };
       books = books.concat(book);
       return book;
     },
+
     editAuthor: (root, args) => {
       const author = authors.find((a) => a.name === args.name);
       if (!author) {
