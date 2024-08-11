@@ -11,7 +11,9 @@
   },
   "dependencies": {
     "@apollo/client": "^3.11.4",
+    "dotenv": "^16.4.5",
     "graphql": "^16.9.0",
+    "mongoose": "^8.5.2",
     "react": "^18.2.0",
     "react-dom": "^18.2.0"
   },
