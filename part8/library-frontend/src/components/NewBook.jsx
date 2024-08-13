@@ -8,24 +8,18 @@ const NewBook = (props) => {
   const [published, setPublished] = useState("");
   const [genre, setGenre] = useState("");
   const [genres, setGenres] = useState([]);
-  const [errorMessage, setErrorMessage] = useState(null);
+
   const [newBook] = useMutation(NEW_BOOK, {
     refetchQueries: [{ query: ALL_AUTHORS }, { query: ALL_BOOKS }],
     onError: (error) => {
       const messages = error.graphQLErrors.map((e) => e.message).join("\n");
-      notify(messages);
+      props.setError(messages);
     },
   });
 
   if (!props.show) {
     return null;
   }
-  const notify = (message) => {
-    setErrorMessage(message);
-    setTimeout(() => {
-      setErrorMessage(null);
-    }, 10000);
-  };
 
   const submit = async (event) => {
     event.preventDefault();
@@ -53,7 +47,6 @@ const NewBook = (props) => {
 
   return (
     <div>
-      <Notify errorMessage={errorMessage} />
       <form onSubmit={submit}>
         <div>
           title
@@ -91,13 +84,6 @@ const NewBook = (props) => {
       </form>
     </div>
   );
-};
-
-const Notify = ({ errorMessage }) => {
-  if (!errorMessage) {
-    return null;
-  }
-  return <div style={{ color: "red" }}>{errorMessage}</div>;
 };
 
 export default NewBook;

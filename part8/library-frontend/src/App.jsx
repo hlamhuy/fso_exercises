@@ -42,10 +42,9 @@ const App = () => {
           <button onClick={() => setPage("login")}>login</button>
         )}
       </div>
-
-      <Authors show={page === "authors"} />
-      <Books show={page === "books"} />
-      <NewBook show={page === "add"} />
+      <Authors show={page === "authors"} setError={notify} />
+      <Books show={page === "books"} setError={notify} />
+      <NewBook show={page === "add"} setError={notify} />
       {page === "login" && (
         <Login setToken={setToken} setPage={setPage} setError={notify} />
       )}

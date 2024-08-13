@@ -16,7 +16,12 @@ const Login = ({ setToken, setPage, setError }) => {
     if (result.data) {
       const token = result.data.login.value;
       setToken(token);
+      console.log("token:", token);
       localStorage.setItem("library-user-token", token);
+      console.log(
+        "library-user-token: ",
+        localStorage.getItem("library-user-token")
+      );
       setPage("authors");
     }
   }, [result.data]);
