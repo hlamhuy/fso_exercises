@@ -41,6 +41,22 @@ const Books = (props) => {
   return (
     <div>
       <h2>books</h2>
+      <div>
+        <label>
+          Filter by genre:
+          <select
+            value={selectedGenre}
+            onChange={(e) => setSelectedGenre(e.target.value)}
+          >
+            <option value="">All genres</option>
+            {genres.map((genre) => (
+              <option key={genre} value={genre}>
+                {genre}
+              </option>
+            ))}
+          </select>
+        </label>
+      </div>
       <p>
         in genre <b>{selectedGenre ? selectedGenre : "all genres"}</b>
       </p>
@@ -61,23 +77,6 @@ const Books = (props) => {
           ))}
         </tbody>
       </table>
-
-      <div>
-        <label>
-          Filter by genre:
-          <select
-            value={selectedGenre}
-            onChange={(e) => setSelectedGenre(e.target.value)}
-          >
-            <option value="">All genres</option>
-            {genres.map((genre) => (
-              <option key={genre} value={genre}>
-                {genre}
-              </option>
-            ))}
-          </select>
-        </label>
-      </div>
     </div>
   );
 };
