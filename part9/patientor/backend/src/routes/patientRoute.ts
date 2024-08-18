@@ -8,6 +8,10 @@ patientRouter.get("/", (_req, res) => {
   res.send(patientService.getNonSenData());
 });
 
+patientRouter.get("/:id", (req, res) => {
+  res.send(patientService.findById(req.params.id));
+});
+
 patientRouter.post("/", (req, res) => {
   try {
     const newPatientEntry = toNewPatientEntry(req.body);
