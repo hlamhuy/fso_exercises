@@ -4,3 +4,6 @@
 [submodule "part 12/fso-containers-application"]
 	path = part 12/fso-containers-application
 	url = https://github.com/hlamhuy/fso-containers-application.git
+[submodule "part 11/fso-phonebook-cicd"]
+	path = part 11/fso-phonebook-cicd
+	url = https://github.com/hlamhuy/fso-phonebook-cicd.git
