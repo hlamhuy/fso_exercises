@@ -15,11 +15,10 @@ app.use('/api/users', usersRouter);
 app.use('/api/login', loginRouter);
 
 app.use((err, req, res, next) => {
-  if (err.message === 'SequelizeValidationError') {
-    res.status(403);
-    res.json({ error: err.message });
+  if (err.name === 'SequelizeValidationError') {
+    const errors = err.errors.map((e) => e.message); 
+    return res.status(400).json({ error: errors });
   }
-
   next(err);
 });
 
