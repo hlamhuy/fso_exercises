@@ -1,6 +1,6 @@
 const router = require('express').Router();
-const { Blog } = require('../models');
-
+const { Blog, User } = require('../models');
+const { tokenExtractor } = require('../util/middleware');
 
 const blogFinder = async (req, res, next) => {
   req.blog = await Blog.findByPk(req.params.id);
@@ -8,20 +8,30 @@ const blogFinder = async (req, res, next) => {
 };
 
 router.get('/', async (req, res) => {
-  const blogs = await Blog.findAll();
+  const blogs = await Blog.findAll({
+    attributes: { exclude: ['userId'] },
+    include: {
+      model: User,
+      attributes: ['name'],
+    },
+  });
   res.json(blogs);
 });
 
-router.post('/', async (req, res) => {
-  const blog = await Blog.create(req.body);
+router.post('/', tokenExtractor, async (req, res) => {
+  const user = await User.findByPk(req.decodedToken.id);
+  const blog = await Blog.create({ ...req.body, userId: user.id });
   res.json(blog);
 });
 
-router.delete('/:id', blogFinder, async (req, res) => {
-  if (req.blog) {
+router.delete('/:id', tokenExtractor, blogFinder, async (req, res) => {
+  const user = await User.findByPk(req.decodedToken.id);
+  if (req.blog && user.id === req.blog.userId) {
     await req.blog.destroy();
+    return res.status(204).end();
+  } else {
+    return res.status(403).json({ error: 'not authorized to delete' });
   }
-  res.status(204).end();
 });
 
 router.put('/:id', blogFinder, async (req, res) => {
