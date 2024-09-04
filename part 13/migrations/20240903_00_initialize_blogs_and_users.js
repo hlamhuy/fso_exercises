@@ -23,15 +23,13 @@ module.exports = {
         type: DataTypes.INTEGER,
         defaultValue: 0,
       },
-      createdAt: {
+      created_at: {
         type: DataTypes.DATE,
         allowNull: false,
-        defaultValue: DataTypes.NOW,
       },
-      updatedAt: {
+      updated_at: {
         type: DataTypes.DATE,
         allowNull: false,
-        defaultValue: DataTypes.NOW,
       },
     });
     await queryInterface.createTable('users', {
@@ -52,19 +50,17 @@ module.exports = {
         type: DataTypes.STRING,
         allowNull: false,
       },
-      passwordHash: {
+      password_hash: {
         type: DataTypes.TEXT,
         allowNull: false,
       },
-      createdAt: {
+      created_at: {
         type: DataTypes.DATE,
         allowNull: false,
-        defaultValue: DataTypes.NOW,
       },
-      updatedAt: {
+      updated_at: {
         type: DataTypes.DATE,
         allowNull: false,
-        defaultValue: DataTypes.NOW,
       },
     });
     await queryInterface.addColumn('blogs', 'user_id', {
