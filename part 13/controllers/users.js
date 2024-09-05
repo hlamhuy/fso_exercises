@@ -13,6 +13,21 @@ router.get('/', async (req, res) => {
   res.json(users);
 });
 
+router.get('/:id', async (req, res) => {
+  const user = await User.findByPk(req.params.id, {
+    attributes: { exclude: ['passwordHash'] },
+    include: [
+      {
+        model: Blog,
+        as: 'readings',
+        attributes: { exclude: ['userId', 'createdAt', 'updatedAt'] },
+        through: { attributes: ['id', 'read'], as: 'readinglists' },
+      },
+    ],
+  });
+  res.json(user);
+});
+
 router.post('/', async (req, res) => {
   const { username, name, password } = req.body;
   const passwordHash = await bcrypt.hash(password, 10);
