@@ -1,6 +1,7 @@
 const router = require('express').Router();
 const bcrypt = require('bcryptjs');
 const { User, Blog } = require('../models');
+const { Op } = require('sequelize');
 
 router.get('/', async (req, res) => {
   const users = await User.findAll({
@@ -14,6 +15,18 @@ router.get('/', async (req, res) => {
 });
 
 router.get('/:id', async (req, res) => {
+  const where = {};
+  if (req.query.read) {
+    let rd;
+    if (req.query.read === 'true') rd = true;
+    else if (req.query.read === 'false') rd = false;
+    else {
+      return res.status(401).json({ error: 'invalid read condition' });
+    }
+    where.read = {
+      [Op.eq]: rd,
+    };
+  }
   const user = await User.findByPk(req.params.id, {
     attributes: { exclude: ['passwordHash'] },
     include: [
@@ -21,7 +34,7 @@ router.get('/:id', async (req, res) => {
         model: Blog,
         as: 'readings',
         attributes: { exclude: ['userId', 'createdAt', 'updatedAt'] },
-        through: { attributes: ['id', 'read'], as: 'readinglists' },
+        through: { attributes: ['id', 'read'], as: 'readinglists', where },
       },
     ],
   });
